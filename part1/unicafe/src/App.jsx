@@ -9,29 +9,38 @@ const Button = ({ state, setState, text }) => {
   )
 }
 
+// Return a line to the html table
 const StatisticsLine = ({ text, value }) => {
   return (
-    <p>{text} {value}</p>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad
   const average = (good - bad) / all
-  const positive = good / all * 100 + " %"
+  const positive = (good / all * 100).toFixed(1) + "%"
   return (
     <>
       <h1>Statistics</h1>
       {all === 0 ? (
         <p>No feedback given</p>
       ) : (
+        // Html table
         <>
-          <StatisticsLine text="good" value={good}/>
-          <StatisticsLine text="neutral" value={neutral}/>
-          <StatisticsLine text="bad" value={bad}/>
-          <StatisticsLine text="all" value={all}/>
-          <StatisticsLine text="average" value={average}/>
-          <StatisticsLine text="average" value={positive}/>
+          <table>
+            <tbody>
+              <StatisticsLine text="good" value={good}/>
+              <StatisticsLine text="neutral" value={neutral}/>
+              <StatisticsLine text="bad" value={bad}/>
+              <StatisticsLine text="all" value={all}/>
+              <StatisticsLine text="average" value={average}/>
+              <StatisticsLine text="positive" value={positive}/>
+            </tbody>
+          </table>
         </>
       )}
     </>
