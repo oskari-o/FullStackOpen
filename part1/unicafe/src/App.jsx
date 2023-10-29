@@ -12,12 +12,22 @@ const Button = ({ state, setState, text }) => {
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad
   const average = (good - bad) / all
-  const positive = good / all
+  const positive = good / all * 100 + " %"
   return (
     <>
-      <p>all {all}</p>
-      <p>average {average}</p>
-      <p>positive {positive}</p>
+      <h1>Statistics</h1>
+      {all === 0 ? (
+        <p>No feedback given</p>
+      ) : (
+        <>
+          <p>good {good}</p>
+          <p>neutral {neutral}</p>
+          <p>bad {bad}</p>
+          <p>all {all}</p>
+          <p>average {average}</p>
+          <p>positive {positive}</p>
+        </>
+      )}
     </>
   )
 }
@@ -34,10 +44,6 @@ const App = () => {
       <Button state={good} setState={setGood} text="good"/>
       <Button state={neutral} setState={setNeutral} text="neutral"/>
       <Button state={bad} setState={setBad} text="bad"/>
-      <h1>Statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
       <Statistics good={good} bad={bad} neutral={neutral}/>
     </div>
   )
