@@ -14,12 +14,19 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
 
-  // Add a button to display a random anecdote
+  // Scores stores a dictionary with keys from 0 to anecdotes.length - 1. Each key holds the number of votes the corresponding anecdote has received.
+  const [scores, setScores] = useState(0)
+
+  // Add a button to the application for voting. The votes are stored in the App component's state.
   return (
     <div>
       <p>
         {anecdotes[selected]}
       </p>
+      <p>
+        has {scores[selected] || 0} votes
+      </p>
+      <button onClick={() => setScores({...scores, [selected]: (scores[selected] || 0) + 1})}>vote</button>
       <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>next anecdote</button>
     </div>
   )
