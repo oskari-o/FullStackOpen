@@ -24,7 +24,6 @@ const App = () => {
       {setScores({...scores, [selected]: scores[selected] + 1})}
   }
 
-  // Add a button to the application for voting. The votes are stored in the App component's state.
   return (
     <div>
       <p>
