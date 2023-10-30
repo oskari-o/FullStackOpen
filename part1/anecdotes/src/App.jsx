@@ -24,8 +24,20 @@ const App = () => {
       {setScores({...scores, [selected]: scores[selected] + 1})}
   }
 
+  const maxScoreAnecdote = () => {
+    var maxIndex = 0
+    const keyValuePairs = Object.entries(scores)
+    if (keyValuePairs.length != 0) {
+      maxIndex = keyValuePairs.reduce((a, b) => a[1] > b[1] ? a : b)[0]
+    }
+    return (
+      anecdotes[maxIndex]
+    )
+  }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>
         {anecdotes[selected]}
       </p>
@@ -34,6 +46,10 @@ const App = () => {
       </p>
       <button onClick={storeScore}>vote</button>
       <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <p>
+        {maxScoreAnecdote()}
+      </p>
     </div>
   )
 }
