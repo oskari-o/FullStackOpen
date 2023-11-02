@@ -8,7 +8,14 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    const newPerson = { name: newName }
+    // Trim whitespace
+    const newNameTrimmed = newName.trim()
+    // Check if name already exists
+    if (persons.some(person => person.name === newNameTrimmed)) {
+      alert(`'${newNameTrimmed}' is already added to phonebook`)
+      return
+    }
+    const newPerson = { name: newNameTrimmed }
     setPersons(persons.concat(newPerson))
   }
 
