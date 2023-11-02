@@ -1,5 +1,37 @@
 import { useState } from 'react'
 
+const Filter = ({ searchTerm, handleSearchTermChange }) => {
+  return (
+    <div>
+      filter shown with <input 
+        placeholder="Search..." 
+        value={searchTerm} 
+        onChange={handleSearchTermChange}
+        />
+    </div>
+  )
+}
+
+const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNumberChange }) => {
+  return (
+    <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange}/>
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+    </form>
+  )
+}
+
+const Persons = ({personsToShow}) => (
+  personsToShow.map(person => <p>{person.name} {person.number}</p>)
+)
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -53,25 +85,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with <input 
-        placeholder="Search..." 
-        value={searchTerm} 
-        onChange={handleSearchTermChange}
-        />
+      <Filter searchTerm={searchTerm} handleSearchTermChange={handleSearchTermChange} />
       <h2>Add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm 
+        addPerson={addPerson} 
+        newName={newName} 
+        handleNameChange={handleNameChange} 
+        newNumber={newNumber} 
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
-      {personsToShow.map(person => <p>{person.name} {person.number}</p>)}
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
