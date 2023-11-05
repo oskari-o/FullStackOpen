@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Filter = ({ searchTerm, handleSearchTermChange }) => {
   return (
@@ -40,12 +41,10 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
   console.log('render', persons.length, 'persons')
@@ -63,10 +62,15 @@ const App = () => {
       name: newNameTrimmed,
       number: newNumber 
     }
-    setPersons(persons.concat(newPerson))
-    // Clear input fields
-    setNewName('')
-    setNewNumber('')
+
+    personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        // Clear input fields
+        setNewName('')
+        setNewNumber('')
+      })
   }
   
 
