@@ -30,8 +30,12 @@ const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNum
   )
 }
 
-const Persons = ({personsToShow}) => (
-  personsToShow.map((person, index) => <p key={index + 1}>{person.name} {person.number}</p>)
+const Persons = ({personsToShow, handleDelete}) => (
+  personsToShow.map((person, index) => 
+    <p key={index + 1}>{person.name} {person.number}
+    <button onClick={() => handleDelete(person.id)}>delete</button>
+    </p>
+  )
 )
 
 const App = () => {
@@ -49,13 +53,32 @@ const App = () => {
   }, [])
   console.log('render', persons.length, 'persons')
 
+  const updatePerson = (id, newPerson) => {
+    personService
+    .update(id, newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        // Clear input fields
+        setNewName('')
+        setNewNumber('')
+        console.log(`Updated ${returnedPerson.name} number to ${returnedPerson.number}`)
+      })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     // Trim whitespace
     const newNameTrimmed = newName.trim()
     // Check if name already exists
     if (persons.some(person => person.name === newNameTrimmed)) {
-      alert(`'${newNameTrimmed}' is already added to phonebook`)
+      if (window.confirm(`${newNameTrimmed} is already in the phonebook, replace the old number with a new one?`)) {
+        const person = persons.find(person => person.name === newNameTrimmed)
+        const newPerson = { 
+          name: newNameTrimmed,
+          number: newNumber 
+        }
+        updatePerson(person.id, newPerson)
+      }
       return
     }
     const newPerson = { 
@@ -89,6 +112,18 @@ const App = () => {
     setSearchTerm(event.target.value)
   }
 
+  const handleDelete = (id) => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+          console.log(`Deleted ${person.name}`)
+        })
+    }
+  }
+
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   console.log(newName)
@@ -105,7 +140,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons 
+        personsToShow={personsToShow}
+        handleDelete={handleDelete}
+      />
     </div>
   )
 }
