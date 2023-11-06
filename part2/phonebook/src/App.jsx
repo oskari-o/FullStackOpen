@@ -83,7 +83,21 @@ const App = () => {
         // Clear input fields
         setNewName('')
         setNewNumber('')
+        // Display notification
         console.log(`Updated ${returnedPerson.name} number to ${returnedPerson.number}`)
+        setErrorStatus(false)
+        setMessage(`Updated ${returnedPerson.name} number to ${returnedPerson.number}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      }).catch(error => {
+        // Display error notification
+        setErrorStatus(true)
+        setMessage(`Information of ${newPerson.name} has already been removed from the server`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+        setPersons(persons.filter(person => person.id !== id))
       })
   }
 
