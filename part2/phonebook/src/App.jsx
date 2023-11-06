@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
 
 const Filter = ({ searchTerm, handleSearchTermChange }) => {
   return (
@@ -38,11 +39,32 @@ const Persons = ({personsToShow, handleDelete}) => (
   )
 )
 
+const Notification = ({ message, error }) => {
+  if (message === null) {
+    return null
+  }
+  if (error === true) {
+    return (
+    <div className='error'>
+      {message}
+    </div>
+    )
+  } else {
+    return (
+      <div className='notification'>
+      {message}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [message, setMessage] = useState(null)
+  const [errorStatus, setErrorStatus] = useState(false)
 
   useEffect(() => {
     personService
@@ -93,6 +115,11 @@ const App = () => {
         // Clear input fields
         setNewName('')
         setNewNumber('')
+        setErrorStatus(false)
+        setMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
   }
   
@@ -130,6 +157,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} error={errorStatus} />
       <Filter searchTerm={searchTerm} handleSearchTermChange={handleSearchTermChange} />
       <h2>Add a new</h2>
       <PersonForm 
