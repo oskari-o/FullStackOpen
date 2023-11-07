@@ -13,7 +13,28 @@ const SearchField = ({ searchTerm, handleSearchTermChange }) => {
   )
 }
 
-const SingleCountryDisplay = ({ countryName, countryObject }) => {
+const WeatherDisplay = ({ capitalName, weather, updateWeather }) => {
+  if (weather === null || weather !== null && (weather.capital !== capitalName)) {
+    updateWeather(capitalName)
+    return (
+      <>
+        <h2>Weather in {capitalName}</h2>
+        <p>Loading ...</p>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <h2>Weather in {weather.capital}</h2>
+        <p>temperature: {weather.temperature} Celcius</p>
+        <img src={weather.weatherIconUrl} alt="weather icon"></img>
+        <p>wind: {weather.windSpeed} m/s</p>
+      </>
+    )
+  }
+}
+
+const SingleCountryDisplay = ({ countryName, countryObject, weather, updateWeather }) => {
   if (countryObject === null) {
     return (
       <>
@@ -27,11 +48,16 @@ const SingleCountryDisplay = ({ countryName, countryObject }) => {
         <h1>{countryName}</h1>
         <p>capital {countryObject.capital}</p>
         <p>area {countryObject.area}</p>
-        <h3>languages</h3>
+        <h3>languages:</h3>
         <ul>
           {Object.values(countryObject.languages).map(language => <li key={language}>{language}</li>)}
         </ul>
         <img src={countryObject.flags.png} alt="flag" width="200" height="200"></img>
+        <WeatherDisplay
+          capitalName={countryObject.capital}
+          weather={weather}
+          updateWeather={updateWeather}
+        />
       </>
     )
   }
@@ -46,7 +72,7 @@ const CountryListElement = ({ countryName, setShowSingleCountry }) => {
   )
 }
 
-const CountryDisplay = ({ countryNames, updateCountry, country, setShowSingleCountry }) => {
+const CountryDisplay = ({ countryNames, updateCountry, country, setShowSingleCountry, weather, updateWeather }) => {
   if (countryNames.length > 10) {
     return (
       <div>
@@ -55,7 +81,14 @@ const CountryDisplay = ({ countryNames, updateCountry, country, setShowSingleCou
     )
   } else if (countryNames.length == 1) {
     updateCountry(countryNames[0])
-    return <SingleCountryDisplay countryName={countryNames[0]} countryObject={country}/>
+    return (
+      <SingleCountryDisplay 
+        countryName={countryNames[0]} 
+        countryObject={country}
+        weather={weather}
+        updateWeather={updateWeather}
+      />
+    )
   } else if (countryNames.length == 0) {
     return (
       <div>
@@ -81,7 +114,8 @@ function App() {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
   const [country, setCountry] = useState(null)
-  const [showSingleCountry, setShowSingleCountry] = useState('Finland')
+  const [showSingleCountry, setShowSingleCountry] = useState('')
+  const [weather, setWeather] = useState(null)
 
   const handleSearchTermChange = (event) => {
     setSearch(event.target.value)
@@ -99,7 +133,6 @@ function App() {
   const updateCountry = (countryName) => {
     if (!(country === null)) {
       if (country.name.common === countryName) {
-        console.log('Country Already updated') // delete
         return
       } 
     }
@@ -111,6 +144,14 @@ function App() {
     })
   }
   
+  const updateWeather = (capital) => {
+    countryService
+    .getWeather(capital)
+    .then(weatherObject => {
+      setWeather(weatherObject)
+      console.log(weatherObject) // delete
+    })
+  }
 
   const filteredCountryNames = (showSingleCountry !== "") ? 
     [showSingleCountry] : 
@@ -127,6 +168,8 @@ function App() {
         updateCountry={updateCountry}
         country={country}
         setShowSingleCountry={setShowSingleCountry}
+        weather={weather}
+        updateWeather={updateWeather}
       />
     </div>
   )
