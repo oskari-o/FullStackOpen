@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
-import axios from 'axios'
 
 const SearchField = ({ searchTerm, handleSearchTermChange }) => {
   return (
@@ -38,7 +37,16 @@ const SingleCountryDisplay = ({ countryName, countryObject }) => {
   }
 }
 
-const CountryDisplay = ({ countryNames, updateCountry, country }) => {
+const CountryListElement = ({ countryName, setShowSingleCountry }) => {
+  return (
+    <div>
+      {countryName}
+      <button onClick={() => setShowSingleCountry(countryName)}>show</button>
+    </div>
+  )
+}
+
+const CountryDisplay = ({ countryNames, updateCountry, country, setShowSingleCountry }) => {
   if (countryNames.length > 10) {
     return (
       <div>
@@ -48,10 +56,21 @@ const CountryDisplay = ({ countryNames, updateCountry, country }) => {
   } else if (countryNames.length == 1) {
     updateCountry(countryNames[0])
     return <SingleCountryDisplay countryName={countryNames[0]} countryObject={country}/>
+  } else if (countryNames.length == 0) {
+    return (
+      <div>
+        No matches
+      </div>
+    )
   } else {
     return (
       <div>
-        {countryNames.map(name => <p key={name}>{name}</p>)}
+        {countryNames.map(name => 
+        <CountryListElement 
+          key={name}
+          countryName={name}
+          setShowSingleCountry={setShowSingleCountry}
+        />)}
       </div>
     )
   } 
@@ -62,17 +81,18 @@ function App() {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
   const [country, setCountry] = useState(null)
+  const [showSingleCountry, setShowSingleCountry] = useState('Finland')
 
   const handleSearchTermChange = (event) => {
     setSearch(event.target.value)
-    console.log(event.target.value) // Delete
+    setShowSingleCountry('')
   }
 
   useEffect(() => {
     countryService.getAllNames()
       .then(names => {
         setCountries(names)
-        console.log(names)
+        console.log("Country list loaded") // delete
       })
   }, [])
 
@@ -92,12 +112,22 @@ function App() {
   }
   
 
-  const filteredCountryNames = countries.filter(country => country.toLowerCase().includes(search.toLowerCase()))
+  const filteredCountryNames = (showSingleCountry !== "") ? 
+    [showSingleCountry] : 
+    countries.filter(country => country.toLowerCase().includes(search.toLowerCase()))
 
   return (
     <div>
-      <SearchField searchTerm={search} handleSearchTermChange={handleSearchTermChange}/>
-      <CountryDisplay countryNames={filteredCountryNames} updateCountry={updateCountry} country={country}/>
+      <SearchField 
+        searchTerm={search}
+        handleSearchTermChange={handleSearchTermChange}
+      />
+      <CountryDisplay 
+        countryNames={filteredCountryNames}
+        updateCountry={updateCountry}
+        country={country}
+        setShowSingleCountry={setShowSingleCountry}
+      />
     </div>
   )
 }
