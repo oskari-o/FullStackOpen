@@ -9,14 +9,16 @@
     "dev": "nodemon index.js",
     "build:ui": "rm -rf dist && cd ../../part2/notes/ && npm run build && cp -r dist ../../part3/backend/",
     "deploy": "fly deploy",
-    "deploy:full": "npm run build:ui && npm run deploy",    
+    "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs"
   },
   "author": "Oskari Ojavuo",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^6.12.2"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.4.10",
