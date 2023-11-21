@@ -1,26 +1,10 @@
 const mongoose = require('mongoose')
 
-mongoose.set('strictQuery', false)
-
-const url = process.env.MONGODB_URI
-
-console.log('connecting to', url)
-
-mongoose.connect(url)
-  /*eslint no-unused-vars: 0*/
-  .then(result => {
-    console.log('connected to MongoDB')
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
-
-/*eslint no-unused-vars: 1*/
 const noteSchema = new mongoose.Schema({
   content: {
     type: String,
-    minLength: 5,
-    required: true
+    required: true,
+    minlength: 5
   },
   important: Boolean,
 })
