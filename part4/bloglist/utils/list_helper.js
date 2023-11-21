@@ -1,3 +1,6 @@
+const collection = require('lodash/collection')
+const math = require('lodash/math')
+
 const dummy = (blogs) => {
   return 1
 }
@@ -23,6 +26,13 @@ const favoriteBlog = (blogs) => {
     : blogs.reduce(reducer, blogs[0])
 }
 
+const mostBlogs = (blogs) => {
+  const grouped = collection.groupBy(blogs, (b) => (b.author))
+  console.log(grouped)
+  const counted = Object.keys(grouped).map((a) => ({"author": a, "blogs": grouped[a].length}))
+  return math.maxBy(counted, (i) => (i.blogs))
+}
+
 module.exports = {
-  dummy, totalLikes, favoriteBlog
+  dummy, totalLikes, favoriteBlog, mostBlogs
 }
