@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "build:ui": "rm -rf dist && cd ../../part2/notes/ && npm run build && cp -r dist ../../part3/backend/",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
@@ -17,9 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "mongoose": "^6.12.2"
+    "express-async-errors": "^3.1.1",
+    "mongoose": "^6.12.2",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.4.10",
@@ -28,6 +31,7 @@
     "nodemon": "^3.0.1"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globalTeardown": "./tests/teardown.js"
   }
 }

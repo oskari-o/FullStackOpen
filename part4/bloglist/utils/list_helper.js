@@ -28,18 +28,16 @@ const favoriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   const grouped = collection.groupBy(blogs, (b) => (b.author))
-  console.log(grouped)
   const counted = Object.keys(grouped).map((a) => ({"author": a, "blogs": grouped[a].length}))
   return math.maxBy(counted, (i) => (i.blogs))
 }
 
 const mostLikes = (blogs) => {
   const grouped = collection.groupBy(blogs, (b) => (b.author))
-  const counted = Object.keys(grouped).map((a) => {
-    return {
+  const counted = Object.keys(grouped).map((a) => ({
       "author": a, 
-      "likes": grouped[a].reduce((sum, item) => (sum + item.likes), 0)}
-  })
+      "likes": grouped[a].reduce((sum, item) => (sum + item.likes), 0)
+  }))
   return math.maxBy(counted, (i) => (i.likes))
 }
 
