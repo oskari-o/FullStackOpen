@@ -122,6 +122,30 @@ test('a blog can be deleted', async () => {
   expect(blogsAtEnd).toHaveLength(0)
 })
 
+test('a blog can be updated', async () => {
+  const response1 = await api.get('/api/blogs')
+  const blogsAtStart = response1.body
+  const blogToUpdate = blogsAtStart[0]
+  
+  const newBlog = {
+    title: 'Test',
+    author: 'Test',
+    url: 'Test',
+    likes: 20000
+  }
+
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(newBlog)
+    .expect(200)
+
+  const response2 = await api.get('/api/blogs')
+  const blogsAtEnd = response2.body
+
+  expect(blogsAtEnd).toHaveLength(1)
+  expect(blogsAtEnd[0].likes).toBe(20000)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
