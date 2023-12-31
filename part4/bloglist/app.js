@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 const e = require('express')
 
 const logger = require('./utils/logger')
@@ -27,6 +28,7 @@ app.use(requestLogger)
 
 app.use("/api/blogs", blogsRouter)
 app.use("/api/users", usersRouter)
+app.use("/api/login", loginRouter)
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
@@ -35,6 +37,12 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: error.message })
   } else if (error.name === 'MongoServerError') {
     return response.status(400).json({ error: error.message })
+  } else if (error.name ===  'JsonWebTokenError') {
+    return response.status(401).json({ error: error.message })
+  } else if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({
+      error: 'token expired'
+    })
   }
   next(error)
 }
