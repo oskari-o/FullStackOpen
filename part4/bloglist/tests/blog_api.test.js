@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-//const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
+const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -145,6 +147,96 @@ test('a blog can be updated', async () => {
   expect(blogsAtEnd).toHaveLength(1)
   expect(blogsAtEnd[0].likes).toBe(20000)
 })
+
+describe('when there is initially one user in the db', () => {
+
+  const initialUser = { username: 'root', name: 'Superuser', password: 'Secret' }
+
+  beforeEach(async () => {
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash(initialUser.password, 10)
+    const user = new User({username: initialUser.username, passwordHash})
+    await user.save()
+  })
+
+  test('a valid user can be created', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'Test1',
+      name: 'Test 1',
+      password: 'Secret',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
+
+  test('creating a user with invalid username fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'Te',
+      name: 'Test 1',
+      password: 'Secret',
+    }
+    
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('creating a user with invalid password fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'Test1',
+      name: 'Test 1',
+      password: 'Se',
+    }
+    
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+  test('creating a user with a duplicate username fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Test 1',
+      password: 'Secret',
+    }
+    
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
+
+})
+
 
 afterAll(async () => {
   await mongoose.connection.close()
