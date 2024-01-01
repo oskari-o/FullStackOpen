@@ -19,12 +19,24 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('Authorization')
+  if (authorization && authorization.startsWith('bearer ')) {
+    request.token = authorization.replace('bearer ', '')
+    logger.info(`Token extracted: ${request.token}`)
+  } else {
+    request.token = null
+  }
+  next()
+}
+
 const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl)
 
 app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
+app.use(tokenExtractor)
 
 app.use("/api/blogs", blogsRouter)
 app.use("/api/users", usersRouter)
