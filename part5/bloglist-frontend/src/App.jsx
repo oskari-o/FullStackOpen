@@ -13,6 +13,8 @@ const App = () => {
   )
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState('info')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -45,6 +47,11 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.log('Wrong credentials')
+      setMessage('Wrong credentials')
+      setMessageType('error')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
 
@@ -60,7 +67,14 @@ const App = () => {
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNewNote('')
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+        setMessage(`a new blog {${returnedBlog.title}} by {${returnedBlog.author}} added`)
+        setMessageType('info')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
   }
 
@@ -115,8 +129,21 @@ const App = () => {
     </form>  
   )
 
+  const Notification = ({ message, messageType }) => {
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className={messageType}>
+        {message}
+      </div>
+    )
+  }
+
   return (
     <div>
+      {Notification({ message, messageType })}
       {!user && loginForm()}
       {user && <div>
         <h2>Create new</h2>
