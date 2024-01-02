@@ -52,29 +52,6 @@ const App = () => {
     }
   }
 
-  // const addBlog = (event) => {
-  //   event.preventDefault()
-  //   const blogObject = {
-  //     title: newTitle,
-  //     author: newAuthor,
-  //     url: newUrl
-  //   }
-
-  //   blogService
-  //     .create(blogObject)
-  //     .then(returnedBlog => {
-  //       setBlogs(blogs.concat(returnedBlog))
-  //       setNewTitle('')
-  //       setNewAuthor('')
-  //       setNewUrl('')
-  //       setMessage(`a new blog {${returnedBlog.title}} by {${returnedBlog.author}} added`)
-  //       setMessageType('info')
-  //       setTimeout(() => {
-  //         setMessage(null)
-  //       }, 5000)
-  //     })
-  // }
-
   const addBlog = (blogObject) => {
     //blogFormRef.current.toggleVisibility()
     blogService
