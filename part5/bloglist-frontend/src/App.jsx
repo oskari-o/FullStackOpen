@@ -13,10 +13,13 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('info')
 
+  const updateBlogs = async () => {
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
+  }
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    updateBlogs() 
   }, [])
 
   useEffect(() => {
@@ -52,18 +55,15 @@ const App = () => {
     }
   }
 
-  const addBlog = (blogObject) => {
+  const addBlog = async (blogObject) => {
     //blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setMessage(`a new blog {${returnedBlog.title}} by {${returnedBlog.author}} added`)
-        setMessageType('info')
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-      })
+    const returnedBlog = await blogService.create(blogObject)
+    updateBlogs()
+    setMessage(`a new blog {${returnedBlog.title}} by {${returnedBlog.author}} added`)
+    setMessageType('info')
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const loginForm = () => (
