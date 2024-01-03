@@ -156,10 +156,22 @@ const App = () => {
             setPassword('')
           }}>logout</button>
         </p>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} deleteBlog={removeBlog} />
-        )}
-        </div>
+        {blogs.map(blog => {
+          
+          const deleteBlog = blog.user ?
+            blog.user.username === user.username ?
+              removeBlog : null
+            : null
+          return (
+            <Blog 
+              key={blog.id} 
+              blog={blog} 
+              likeBlog={likeBlog} 
+              deleteBlog={deleteBlog} 
+            />
+          )
+        })}
+      </div>
       }
     </div>
   )
