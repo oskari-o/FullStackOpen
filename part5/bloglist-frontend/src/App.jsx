@@ -86,6 +86,18 @@ const App = () => {
     updateBlog(blogObject.id, likedBlog)
   }
 
+  const removeBlog = async (blogObject) => {
+    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
+      await blogService.deleteBlog(blogObject.id)
+      updateBlogs()
+      setMessage(`blog '${blogObject.title}' by '${blogObject.author}' removed`)
+      setMessageType('info')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -145,7 +157,7 @@ const App = () => {
           }}>logout</button>
         </p>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} deleteBlog={removeBlog} />
         )}
         </div>
       }
