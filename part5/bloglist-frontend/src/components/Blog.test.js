@@ -51,15 +51,16 @@ describe('<Blog />', () => {
     const url = screen.getByText('http://testurl1.com')
   })
 
-  // test('toggled content can be closed', async () => {
-  //   const user = userEvent.setup()
-  //   const button = screen.getByText('show...')
-  //   await user.click(button)
+  test('like function gets calleb with each click', async () => {
+    const user = userEvent.setup()
 
-  //   const closeButton = screen.getByText('cancel')
-  //   await user.click(closeButton)
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
 
-  //   const div = container.querySelector('.togglableContent')
-  //   expect(div).toHaveStyle('display: none')
-  // })
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton) // 1st click
+    await user.click(likeButton) // 2nd click
+
+    expect(likeblog.mock.calls).toHaveLength(2)
+  })
 })
