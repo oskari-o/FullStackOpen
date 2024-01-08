@@ -39,14 +39,17 @@ describe('<Blog />', () => {
     expect(div).toHaveStyle('display: none')
   })
 
-  // test('after clicking the button, children are displayed', async () => {
-  //   const user = userEvent.setup()
-  //   const button = screen.getByText('show...')
-  //   await user.click(button)
+  test('after clicking the button, url and number of likes are displayed', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
 
-  //   const div = container.querySelector('.togglableContent')
-  //   expect(div).not.toHaveStyle('display: none')
-  // })
+    const div = container.querySelector('.togglableBlogInfo')
+    expect(div).not.toHaveStyle('display: none')
+
+    const likes = screen.getByText('likes 1')
+    const url = screen.getByText('http://testurl1.com')
+  })
 
   // test('toggled content can be closed', async () => {
   //   const user = userEvent.setup()
