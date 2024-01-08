@@ -17,7 +17,7 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author} <button onClick={() => setVisible(!visible)}>{buttonLabel}</button>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableBlogInfo">
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={() => likeBlog(blog)}>like</button></p>
         <p>{blog.user ? blog.user.name : 'Undefined creator'}</p>
