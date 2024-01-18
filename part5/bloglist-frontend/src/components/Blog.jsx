@@ -15,7 +15,7 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author} <button onClick={() => setVisible(!visible)}>{buttonLabel}</button>
       <div style={showWhenVisible} className="togglableBlogInfo">
         <p>{blog.url}</p>
