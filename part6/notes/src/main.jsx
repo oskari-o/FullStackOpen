@@ -5,8 +5,9 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 
 import App from './App'
-import noteReducer from './reducers/noteReducer'
+
 import filterReducer from './reducers/filterReducer'
+import noteReducer from './reducers/noteReducer'
 
 const store = configureStore({
   reducer: {
