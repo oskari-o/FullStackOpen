@@ -2,18 +2,18 @@
   "notes": [
     {
       "content": "the app state is in redux store",
-      "important": true,
+      "important": false,
       "id": "1"
     },
     {
       "content": "state changes are made with actions",
-      "important": false,
+      "important": true,
       "id": "2"
     },
     {
       "id": "d4bd",
       "content": "awdawd",
-      "important": false
+      "important": true
     },
     {
       "id": "6c93",
@@ -23,12 +23,12 @@
     {
       "id": "4140",
       "content": "awdawd",
-      "important": false
+      "important": true
     },
     {
       "id": "bc2a",
       "content": "awdawdawd",
-      "important": false
+      "important": true
     },
     {
       "id": "dca9",
@@ -43,7 +43,7 @@
     {
       "id": "fc5c",
       "content": "awdawd",
-      "important": false
+      "important": true
     },
     {
       "id": "3b65",
@@ -53,7 +53,7 @@
     {
       "id": "70d1",
       "content": "combineReducers forms one reducer from many simple reducers",
-      "important": false
+      "important": true
     },
     {
       "id": "487e",
@@ -63,27 +63,72 @@
     {
       "id": "770e",
       "content": "awdawd",
-      "important": false
+      "important": true
     },
     {
       "id": "3244",
       "content": "combineReducers forms one reducer from many simple reducers",
-      "important": false
+      "important": true
     },
     {
       "id": "84bf",
       "content": "combineReducers forms one reducer from many simple reducers",
-      "important": false
+      "important": true
     },
     {
       "id": "6395",
       "content": "combineReducers forms one reducer from many simple reducers",
-      "important": false
+      "important": true
     },
     {
       "id": "d424",
       "content": "combineReducers forms one reducer from many simple reducers",
-      "important": false
+      "important": true
+    },
+    {
+      "id": "439f",
+      "content": "awdawd",
+      "important": true
+    },
+    {
+      "id": "5974",
+      "content": "awdad",
+      "important": true
+    },
+    {
+      "id": "045e",
+      "content": "awdawd",
+      "important": true
+    },
+    {
+      "id": "15ad",
+      "content": "awdawdawdawd",
+      "important": true
+    },
+    {
+      "id": "819d",
+      "content": "awdawd",
+      "important": true
+    },
+    {
+      "id": "f9dc",
+      "content": "awdwad",
+      "important": true
+    },
+    {
+      "id": "f62a",
+      "content": "awdawdawd",
+      "important": true
+    },
+    {
+      "id": "9a3b",
+      "content": "awdawd",
+      "important": true
+    },
+    {
+      "id": "5e32",
+      "content": "awdawd",
+      "important": true
     }
   ]
 }
