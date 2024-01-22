@@ -1,10 +1,12 @@
-const AnecdoteForm = () => {
+// eslint-disable-next-line react/prop-types
+const AnecdoteForm = ({addAnecdote}) => {
 
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('new anecdote')
+    console.log('new anecdote', content)
+    addAnecdote(content)
 }
 
   return (
