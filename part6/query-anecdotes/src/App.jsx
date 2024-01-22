@@ -25,6 +25,10 @@ const App = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+    },
+    onError: (error) => {
+      console.log(error)
+      displayNotification('too short anecdote, must have length 5 or more', 5)
     }
   })
 
