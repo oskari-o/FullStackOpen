@@ -11,9 +11,7 @@ export const useField = (name) => {
     setValue('')
 
   return {
-    name,
-    value,
-    onChange,
+    fields: {name, value, onChange}, 
     reset
   }
 }
