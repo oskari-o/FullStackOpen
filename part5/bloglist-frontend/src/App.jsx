@@ -7,8 +7,8 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('info')
@@ -19,7 +19,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    updateBlogs() 
+    updateBlogs()
   }, [])
 
   useEffect(() => {
@@ -36,11 +36,10 @@ const App = () => {
 
     try {
       const user = await loginService.login({
-        username, password,
+        username,
+        password,
       })
-      window.localStorage.setItem(
-        'loggedBloglistUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -59,7 +58,9 @@ const App = () => {
     //blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
     updateBlogs()
-    setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+    setMessage(
+      `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+    )
     setMessageType('info')
     setTimeout(() => {
       setMessage(null)
@@ -70,7 +71,9 @@ const App = () => {
     const returnedBlog = await blogService.update(id, blogObject)
     updateBlogs()
     // Message can be removed
-    setMessage(`blog {${returnedBlog.title}} by {${returnedBlog.author}} updated`)
+    setMessage(
+      `blog {${returnedBlog.title}} by {${returnedBlog.author}} updated`
+    )
     setMessageType('info')
     setTimeout(() => {
       setMessage(null)
@@ -81,13 +84,15 @@ const App = () => {
     const likedBlog = {
       ...blogObject,
       likes: blogObject.likes + 1,
-      user: blogObject.user.id
+      user: blogObject.user.id,
     }
     updateBlog(blogObject.id, likedBlog)
   }
 
   const removeBlog = async (blogObject) => {
-    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
+    if (
+      window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)
+    ) {
       await blogService.deleteBlog(blogObject.id)
       updateBlogs()
       setMessage(`blog '${blogObject.title}' by '${blogObject.author}' removed`)
@@ -102,8 +107,8 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
-          id='username'
+        <input
+          id="username"
           type="text"
           value={username}
           name="Username"
@@ -112,21 +117,23 @@ const App = () => {
       </div>
       <div>
         password
-          <input
-          id='password'
+        <input
+          id="password"
           type="password"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button id='login-button' type="submit">login</button>
-    </form>      
+      <button id="login-button" type="submit">
+        login
+      </button>
+    </form>
   )
 
   const blogForm = () => (
-    <Togglable buttonLabel='new blog'>
-      <BlogForm createBlog={addBlog}/>
+    <Togglable buttonLabel="new blog">
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
@@ -134,12 +141,8 @@ const App = () => {
     if (message === null) {
       return null
     }
-  
-    return (
-      <div className={messageType}>
-        {message}
-      </div>
-    )
+
+    return <div className={messageType}>{message}</div>
   }
 
   return (
@@ -147,34 +150,39 @@ const App = () => {
       {Notification({ message, messageType })}
       <h2>blogs</h2>
       {!user && loginForm()}
-      {user && <div>
-        {blogForm()}
-        <p>
-          {user.name} logged in
-          <button onClick={() => {
-            window.localStorage.removeItem('loggedBloglistUser')
-            setUser(null)
-            setUsername('')
-            setPassword('')
-          }}>logout</button>
-        </p>
-        {blogs.map(blog => {
-          
-          const deleteBlog = blog.user ?
-            blog.user.username === user.username ?
-              removeBlog : null
-            : null
-          return (
-            <Blog 
-              key={blog.id} 
-              blog={blog} 
-              likeBlog={likeBlog} 
-              deleteBlog={deleteBlog} 
-            />
-          )
-        })}
-      </div>
-      }
+      {user && (
+        <div>
+          {blogForm()}
+          <p>
+            {user.name} logged in
+            <button
+              onClick={() => {
+                window.localStorage.removeItem('loggedBloglistUser')
+                setUser(null)
+                setUsername('')
+                setPassword('')
+              }}
+            >
+              logout
+            </button>
+          </p>
+          {blogs.map((blog) => {
+            const deleteBlog = blog.user
+              ? blog.user.username === user.username
+                ? removeBlog
+                : null
+              : null
+            return (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                likeBlog={likeBlog}
+                deleteBlog={deleteBlog}
+              />
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
