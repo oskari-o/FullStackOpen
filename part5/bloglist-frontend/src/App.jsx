@@ -1,17 +1,30 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+import NotificationContext from './NotificationContext'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [messageType, setMessageType] = useState('info')
+  const [message, messageDispatch, messageType, messageTypeDispatch] =
+    useContext(NotificationContext)
+  //const [message, setMessage] = useState(null)
+  //const [messageType, setMessageType] = useState('info')
+
+  const displayMessage = (message, messageType, duration = 5) => {
+    messageDispatch({ type: 'SET', payload: message })
+    messageTypeDispatch({ type: 'SET', payload: messageType })
+    console.log(message, messageType)
+    setTimeout(() => {
+      messageDispatch({ type: 'CLEAR' })
+    }, duration * 1000)
+  }
 
   const updateBlogs = async () => {
     const blogs = await blogService.getAll()
@@ -46,11 +59,7 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.log('Wrong credentials')
-      setMessage('Wrong credentials')
-      setMessageType('error')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      displayMessage('Wrong credentials', 'error')
     }
   }
 
@@ -58,26 +67,20 @@ const App = () => {
     //blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
     updateBlogs()
-    setMessage(
-      `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+    displayMessage(
+      `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+      'info'
     )
-    setMessageType('info')
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
   }
 
   const updateBlog = async (id, blogObject) => {
     const returnedBlog = await blogService.update(id, blogObject)
     updateBlogs()
     // Message can be removed
-    setMessage(
-      `blog {${returnedBlog.title}} by {${returnedBlog.author}} updated`
+    displayMessage(
+      `blog {${returnedBlog.title}} by {${returnedBlog.author}} updated`,
+      'info'
     )
-    setMessageType('info')
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
   }
 
   const likeBlog = async (blogObject) => {
@@ -95,11 +98,10 @@ const App = () => {
     ) {
       await blogService.deleteBlog(blogObject.id)
       updateBlogs()
-      setMessage(`blog '${blogObject.title}' by '${blogObject.author}' removed`)
-      setMessageType('info')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      displayMessage(
+        `blog '${blogObject.title}' by '${blogObject.author}' removed`,
+        'info'
+      )
     }
   }
 
