@@ -112,7 +112,7 @@ const App = () => {
     ) {
       await deleteBlogMutation.mutate(blogObject.id)
       displayMessage(
-        `blog '${blogObject.title}' by '${blogObject.author}' removed`,
+        `blog '${blogObject.title}' by '${blogObject.author}' deleted`,
         'info'
       )
     }
