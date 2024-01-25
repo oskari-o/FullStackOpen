@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
@@ -8,32 +9,57 @@ import loginService from './services/login'
 import NotificationContext from './NotificationContext'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, messageDispatch, messageType, messageTypeDispatch] =
     useContext(NotificationContext)
-  //const [message, setMessage] = useState(null)
-  //const [messageType, setMessageType] = useState('info')
 
   const displayMessage = (message, messageType, duration = 5) => {
     messageDispatch({ type: 'SET', payload: message })
     messageTypeDispatch({ type: 'SET', payload: messageType })
-    console.log(message, messageType)
     setTimeout(() => {
       messageDispatch({ type: 'CLEAR' })
     }, duration * 1000)
   }
 
-  const updateBlogs = async () => {
-    const blogs = await blogService.getAll()
-    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-  }
+  const blogResult = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+  })
 
-  useEffect(() => {
-    updateBlogs()
-  }, [])
+  const blogs = blogResult.data
+
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (returnedBlog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      displayMessage(
+        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+        'info'
+      )
+    },
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (returnedBlog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      displayMessage(
+        `blog ${returnedBlog.title} by ${returnedBlog.author} updated`,
+        'info'
+      )
+    },
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    },
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -63,24 +89,12 @@ const App = () => {
     }
   }
 
-  const addBlog = async (blogObject) => {
-    //blogFormRef.current.toggleVisibility()
-    const returnedBlog = await blogService.create(blogObject)
-    updateBlogs()
-    displayMessage(
-      `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
-      'info'
-    )
+  const addBlog = (blogObject) => {
+    newBlogMutation.mutate(blogObject)
   }
 
-  const updateBlog = async (id, blogObject) => {
-    const returnedBlog = await blogService.update(id, blogObject)
-    updateBlogs()
-    // Message can be removed
-    displayMessage(
-      `blog {${returnedBlog.title}} by {${returnedBlog.author}} updated`,
-      'info'
-    )
+  const updateBlog = async (blogObject) => {
+    updateBlogMutation.mutate(blogObject)
   }
 
   const likeBlog = async (blogObject) => {
@@ -89,15 +103,14 @@ const App = () => {
       likes: blogObject.likes + 1,
       user: blogObject.user.id,
     }
-    updateBlog(blogObject.id, likedBlog)
+    updateBlog(likedBlog)
   }
 
   const removeBlog = async (blogObject) => {
     if (
       window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)
     ) {
-      await blogService.deleteBlog(blogObject.id)
-      updateBlogs()
+      await deleteBlogMutation.mutate(blogObject.id)
       displayMessage(
         `blog '${blogObject.title}' by '${blogObject.author}' removed`,
         'info'
@@ -168,21 +181,23 @@ const App = () => {
               logout
             </button>
           </p>
-          {blogs.map((blog) => {
-            const deleteBlog = blog.user
-              ? blog.user.username === user.username
-                ? removeBlog
+          {blogResult.isLoading && <div>Loading blogs...</div>}
+          {!blogResult.isLoading &&
+            blogs.map((blog) => {
+              const deleteBlog = blog.user
+                ? blog.user.username === user.username
+                  ? removeBlog
+                  : null
                 : null
-              : null
-            return (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                likeBlog={likeBlog}
-                deleteBlog={deleteBlog}
-              />
-            )
-          })}
+              return (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  likeBlog={likeBlog}
+                  deleteBlog={deleteBlog}
+                />
+              )
+            })}
         </div>
       )}
     </div>
