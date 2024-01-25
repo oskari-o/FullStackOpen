@@ -7,11 +7,13 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 import NotificationContext from './NotificationContext'
+import UserContext from './UserContext'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  //const [user, setUser] = useState(null)
+  const [user, userDispatch] = useContext(UserContext)
   const [message, messageDispatch, messageType, messageTypeDispatch] =
     useContext(NotificationContext)
 
@@ -65,7 +67,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({ type: 'SET', payload: user })
       blogService.setToken(user.token)
     }
   }, [])
@@ -80,7 +82,7 @@ const App = () => {
       })
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({ type: 'SET', payload: user })
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -173,7 +175,7 @@ const App = () => {
             <button
               onClick={() => {
                 window.localStorage.removeItem('loggedBloglistUser')
-                setUser(null)
+                userDispatch({ type: 'SET', payload: null })
                 setUsername('')
                 setPassword('')
               }}
